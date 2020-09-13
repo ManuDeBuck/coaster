@@ -1,4 +1,5 @@
 from core.database import Database
+from core.seed import create_tables
 from telegram.ext import Updater, MessageHandler, CommandHandler, CallbackQueryHandler, Filters
 import os
 from barcode import Code128
@@ -77,6 +78,8 @@ class CoasterBotHandler:
 if __name__ == "__main__":
     # Create database
     database = Database(os.getenv("db_file"))
+    # Make sure all tables are instantiated
+    create_tables(database)
     # Create bot handler
     handler = CoasterBotHandler(database)
     # Run the bot

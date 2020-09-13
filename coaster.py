@@ -2,7 +2,6 @@ import enum
 from core.database import Database
 from core.items import Items, Item
 from core.clients import Clients, Client
-from core.groups import Groups, Group
 from core.seed import create_tables
 from core.purchases import Purchases, Purchase
 from math import ceil

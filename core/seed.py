@@ -1,21 +1,12 @@
 def create_tables(database):
     database.create_table("""
-            CREATE TABLE IF NOT EXISTS item_groups (
-                id integer PRIMARY KEY AUTOINCREMENT,
-                name text NOT NULL
-            );
-        """)
-
-    database.create_table("""
         CREATE TABLE IF NOT EXISTS items (
             id integer PRIMARY KEY AUTOINCREMENT,
             name text NOT NULL,
             description text NOT NULL,
-            group_id integer NOT NULL,
             barcode text NOT NULL,
             price REAL NOT NULL,
-            stock INTEGER NOT NULL,
-            FOREIGN KEY (group_id) REFERENCES item_groups (id)
+            stock INTEGER NOT NULL
         );
     """)
 
