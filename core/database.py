@@ -11,7 +11,7 @@ class Database:
 
     def create_connection(self):
         try:
-            return sq.connect(self.db_file)
+            return sq.connect(self.db_file, check_same_thread=False)
         except Exception as e:
             print(e)
         return None

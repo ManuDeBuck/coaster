@@ -23,6 +23,7 @@ def create_tables(database):
         CREATE TABLE IF NOT EXISTS clients (
             id integer PRIMARY KEY AUTOINCREMENT,
             nickname text NOT NULL,
+            telegram_id text NOT NULL,
             barcode text NOT NULL,
             balance REAL NOT NULL,
             UNIQUE (barcode)

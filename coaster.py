@@ -7,6 +7,11 @@ from core.seed import create_tables
 from core.purchases import Purchases, Purchase
 from math import ceil
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 class BarcodeType(enum.Enum):
     Client = 0
@@ -21,7 +26,7 @@ def barcode_enum(barcode):
 
 
 def main():
-    db_file = "coaster.db"  # TODO: .env
+    db_file = os.getenv("db_file")
     database = Database(db_file)
     items = Items(database)
     clients = Clients(database)
