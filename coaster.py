@@ -47,6 +47,8 @@ def main():
         product = items.get_by_barcode(barcode)
         print("Scanned product: {}".format(str(product)))
 
+        price_
+
 
 if __name__ == "__main__":
     main()
