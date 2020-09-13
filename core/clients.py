@@ -1,15 +1,14 @@
 import random
 
 class Client:
-
-    def __init__(self, id, nickname, barcode, balance):
-        self.id = id
+    def __init__(self, client_id, nickname, barcode, balance):
+        self.client_id = client_id
         self.nickname = nickname
         self.barcode = barcode
         self.balance = balance
 
     def __str__(self):
-        return "Client({}, {}, {}, {})".format(self.id, self.nickname, self.barcode, self.balance)
+        return "Client({}, {}, {}, {})".format(self.client_id, self.nickname, self.barcode, self.balance)
 
     @staticmethod
     def create(name):

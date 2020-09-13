@@ -1,8 +1,11 @@
 import enum
 from core.database import Database
-from core.items import Items
+from core.items import Items, Item
 from core.clients import Clients, Client
+from core.groups import Groups, Group
 from core.seed import create_tables
+from core.purchases import Purchases, Purchase
+from math import ceil
 
 
 class BarcodeType(enum.Enum):
@@ -22,11 +25,10 @@ def main():
     database = Database(db_file)
     items = Items(database)
     clients = Clients(database)
+    groups = Groups(database)
+    purchases = Purchases(database)
 
     create_tables(database)
-
-    cli = Client.create("manu")
-    clients.persist(cli)
 
     while True:
         client_barcodes = []
@@ -47,7 +49,15 @@ def main():
         product = items.get_by_barcode(barcode)
         print("Scanned product: {}".format(str(product)))
 
-        price_
+        price_per_person = ceil(product.price * 20 / len(client_list)) / 20  # ceil with 2 decimals
+        print("Price paid per person: {}".format(str(price_per_person)))
+
+        for client in client_list:
+            purchase = Purchase.create(product, client, price_per_person)
+            purchases.persist(purchase)
+            print(purchase)
+
+        print("Purchase registered")
 
 
 if __name__ == "__main__":

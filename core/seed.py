@@ -34,6 +34,7 @@ def create_tables(database):
             id integer PRIMARY KEY AUTOINCREMENT,
             item_id integer NOT NULL,
             client_id integer NOT NULL,
+            paid_price float NOT NULL,
             date text NOT NULL,
             FOREIGN KEY (item_id) REFERENCES items (id),
             FOREIGN KEY (client_id) REFERENCES clients (id)

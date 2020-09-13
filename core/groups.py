@@ -4,6 +4,9 @@ class Group:
         self.group_id = group_id
         self.name = name
 
+    def __str__(self):
+        return "Group({}, {})".format(self.group_id, self.name)
+
     @staticmethod
     def create(name):
         return Group(None, name)
@@ -17,5 +20,5 @@ class Groups:
     def persist(self, group):
         query = """INSERT INTO item_groups (name) VALUES (?)"""
         data = (group.name,)
-        generated_id = self.database.execute(query, data)
-        group.id = generated_id
+        generated_id = self.database.insert(query, data)
+        group.group_id = generated_id

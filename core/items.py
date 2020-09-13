@@ -24,8 +24,8 @@ class Items:
         self.database = database
 
     def persist(self, item):
-        query = """INSERT INTO items (name, description, group_id, barcode, price, stock) VALUES (?, ?)"""
-        data = (item.name, item.description, item.group.group_id, item.barcode, item.price, item.stock)
+        query = """INSERT INTO items (name, description, group_id, barcode, price, stock) VALUES (?, ?, ?, ?, ?, ?)"""
+        data = (item.name, item.description, item.group_id, item.barcode, item.price, item.stock)
         generated_id = self.database.insert(query, data)
         item.item_id = generated_id
 
