@@ -22,7 +22,7 @@ class Clients:
         self.database = database
 
     def persist(self, client):
-        query = """INSERT INTO clients (nickname, telegram_id, barcode, balance) VALUES (?, ?, ?, ?)"""
+        query = """REPLACE INTO clients (nickname, telegram_id, barcode, balance) VALUES (?, ?, ?, ?)"""
         data = (client.nickname, client.telegram_id, client.barcode, client.balance)
         generated_id = self.database.insert(query, data)
         client.id = generated_id

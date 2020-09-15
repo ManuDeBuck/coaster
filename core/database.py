@@ -35,7 +35,10 @@ class Database:
     def select(self, query, data=None):
         try:
             cursor = self.connection.cursor()
-            cursor.execute(query, data)
+            if data:
+                cursor.execute(query, data)
+            else:
+                cursor.execute(query)
             self.connection.commit()
             return cursor.fetchall()
         except Exception as e:

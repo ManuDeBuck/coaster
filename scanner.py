@@ -29,7 +29,6 @@ def main():
     database = Database(db_file)
     items = Items(database)
     clients = Clients(database)
-    groups = Groups(database)
     purchases = Purchases(database)
 
     create_tables(database)
@@ -49,17 +48,27 @@ def main():
         if not len(client_list):
             continue
 
-        print("Clients: {}".format(str([str(client) for client in client_list])))
+        print("Clients: {}".format(", ".join([str(client) for client in client_list])))
         product = items.get_by_barcode(barcode)
         print("Scanned product: {}".format(str(product)))
 
-        price_per_person = ceil(product.price * 20 / len(client_list)) / 20  # ceil with 2 decimals
+
+        price_per_person = product.price
+        if len(client_list) > 1:
+            price_per_person = ceil(product.price * 20 / len(client_list)) / 20  # ceil with 2 decimals
         print("Price paid per person: {}".format(str(price_per_person)))
 
         for client in client_list:
             purchase = Purchase.create(product, client, price_per_person)
             purchases.persist(purchase)
+
+            client.balance += price_per_person
+            clients.persist(client)
+
             print(purchase)
+
+        product.stock -= 1
+        items.persist(product)
 
         print("Purchase registered")
 
