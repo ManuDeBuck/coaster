@@ -21,11 +21,23 @@ Afterwards everyone has the possibility to retrieve their balance via the telegr
 
 ## Installation
 
-Need: _python_, _pip_, _barcode scanner_
+Need: _python_, _pip_, _sqlite3_, _barcode scanner_
+
+Install requirements:
 
 ```bash
-pip install -r requirements
+$ pip install -r requirements
 ```
+
+Create database (with name _coaster.db_, but may be changed if wanted):
+
+``` bash
+$ mysql3 coaster.db
+```
+
+### .env file
+
+A `.env`-file is needed to keep your secrets. See `.env_example` for the needed keys.
 
 ## License
 

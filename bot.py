@@ -1,7 +1,7 @@
+import os
 from core.database import Database
 from core.seed import create_tables
 from telegram.ext import Updater, MessageHandler, CommandHandler, CallbackQueryHandler, Filters
-import os
 from barcode import Code128
 from barcode.writer import ImageWriter
 from dotenv import load_dotenv

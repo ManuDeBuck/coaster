@@ -1,15 +1,12 @@
 import enum
+import os
+from math import ceil
+from dotenv import load_dotenv
 from core.database import Database
 from core.items import Items, Item
 from core.clients import Clients, Client
 from core.seed import create_tables
 from core.purchases import Purchases, Purchase
-from math import ceil
-
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
 class BarcodeType(enum.Enum):
@@ -52,7 +49,6 @@ def main():
         product = items.get_by_barcode(barcode)
         print("Scanned product: {}".format(str(product)))
 
-
         price_per_person = product.price
         if len(client_list) > 1:
             price_per_person = ceil(product.price * 20 / len(client_list)) / 20  # ceil with 2 decimals
@@ -74,4 +70,5 @@ def main():
 
 
 if __name__ == "__main__":
+    load_dotenv()
     main()
