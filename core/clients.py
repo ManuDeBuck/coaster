@@ -52,3 +52,16 @@ class Clients:
         results = self.database.select(query, data)
         if len(results):
             return Client(*results[0])
+
+    def get_by_nickname(self, name):
+        query = """
+                SELECT  s.id,
+                        s.nickname,
+                        s.telegram_id,
+                        s.barcode,
+                        s.balance
+                    FROM clients AS s WHERE s.nickname = ?"""
+        data = (name,)
+        results = self.database.select(query, data)
+        if len(results):
+            return Client(*results[0])

@@ -43,3 +43,11 @@ class Database:
             return cursor.fetchall()
         except Exception as e:
             print(e)
+
+    def delete(self, query, data=None):
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute(query)
+            self.connection.commit()
+        except Exception as e:
+            print(e)

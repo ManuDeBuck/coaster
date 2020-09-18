@@ -39,6 +39,34 @@ class CoasterBotHandler:
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text="The product {} is added.".format(product_name))
 
+    def remove_product(self, update, context):
+        if not self.is_admin(update, context):
+            return
+        command_split = update.message.text.split(" ")
+        if len(command_split) < 2:
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                     text="format: /remove_product productname")
+        product_name = command_split[1].strip()
+        product = self.items.get_by_item_name(product_name)
+        self.items.remove(product)
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                                 text=f"The product {product_name} is removed.")
+
+    def change_price(self, update, context):
+        if not self.is_admin(update, context):
+            return
+        command_split = update.message.text.split(" ")
+        if len(command_split) < 3:
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                     text="format: /change_price productname new_price")
+        product_name = command_split[1].strip()
+        product_new_price = command_split[1].strip()
+        product = self.items.get_by_item_name(product_name)
+        product.price = product_new_price
+        self.items.persist(product)
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                                 text=f"The product {product_name}'s new price is {product_new_price}.")
+
     def get_balance(self, update, context):
         telegram_id = update.message.from_user.id
         client = self.clients.get_by_telegram_id(telegram_id)
@@ -49,6 +77,24 @@ class CoasterBotHandler:
         else:
             context.bot.send_message(chat_id=update.effective_chat.id,
                                      text="No client with telegram id {} can be found".format(telegram_id))
+
+    def reset_balance(self, update, context):
+        if not self.is_admin(update, context):
+            return
+        command_split = update.message.text.split(" ")
+        if len(command_split) < 2:
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                     text="Format: /reset_balance nickname")
+        client_name = command_split[1]
+        client = self.clients.get_by_nickname(client_name)
+        if client is not None:
+            client.balance = 0
+            self.clients.persist(client)
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                     text=f"Balance of {client_name} is reset.")
+        else:
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                     text=f"No client with name {client_name}.")
 
     def create_client(self, update, context):
         if not self.is_admin(update, context):
@@ -116,7 +162,8 @@ class CoasterBotHandler:
     @staticmethod
     def help(update, context):
         public_commands = ["/get_balance", "/telegram_id", "/get_barcode", "/help"]
-        admin_commands = ["/add_product", "/create_client", "/list_stock", "/add_stock"]
+        admin_commands = ["/add_product", "/create_client", "/list_stock", "/add_stock", "/reset_balance",
+                          "/remove_product"]
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text="Current public commands are: {}. Current admin-only commands are: {}".format(
                                      ", ".join(public_commands), ", ".join(admin_commands)))
@@ -153,6 +200,15 @@ class CoasterBotHandler:
 
         add_stock_handler = CommandHandler('add_stock', self.add_stock)
         dispatcher.add_handler(add_stock_handler)
+
+        reset_balance_handler = CommandHandler('reset_balance', self.reset_balance)
+        dispatcher.add_handler(reset_balance_handler)
+
+        remove_product_handler = CommandHandler('remove_product', self.remove_product)
+        dispatcher.add_handler(remove_product_handler)
+
+        change_price_handler = CommandHandler('change_price', self.change_price)
+        dispatcher.add_handler(change_price_handler)
 
         help_handler = CommandHandler('help', self.help)
         dispatcher.add_handler(help_handler)

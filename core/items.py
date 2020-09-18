@@ -64,3 +64,10 @@ class Items:
         results = self.database.select(query, data)
         if len(results):
             return Item(*results[0])
+
+    def remove(self, item_id):
+        query = """
+                DELETE FROM items WHERE id = ?
+                """
+        data = (item_id,)
+        self.database.delete(query, data)
