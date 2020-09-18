@@ -1,6 +1,6 @@
 # Coaster
 
-A super lightweight, hyper modern approach to the classic coaster-to-keep-track-of-consummations tool.
+A super lightweight, hyper modern approach to the classic coaster-to-keep-track-of-consumptions tool.
 
 ## Scanner
 

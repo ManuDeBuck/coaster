@@ -138,6 +138,10 @@ class CoasterBotHandler:
         if not self.is_admin(update, context):
             return
         items_list = self.items.list()
+        if not len(items_list):
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                 text="No products yet.")
+            return
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text="\n".join(["{}: {}".format(item.name, item.stock) for item in items_list]))
 
