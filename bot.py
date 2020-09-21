@@ -140,7 +140,7 @@ class CoasterBotHandler:
         items_list = self.items.list()
         if not len(items_list):
             context.bot.send_message(chat_id=update.effective_chat.id,
-                                 text="No products yet.")
+                                     text="No products yet.")
             return
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text="\n".join(["{}: {}".format(item.name, item.stock) for item in items_list]))
@@ -151,10 +151,11 @@ class CoasterBotHandler:
         client_list = self.clients.list()
         if not len(client_list):
             context.bot.send_message(chat_id=update.effective_chat.id,
-                                 text="No clients yet.")
+                                     text="No clients yet.")
             return
         context.bot.send_message(chat_id=update.effective_chat.id,
-                                 text="\n".join([f"Client {client.nickname}: {client.balance}" for client in client_list]))
+                                 text="\n".join([f"Client {client.nickname}: {round(client.balance, 2)}" for client in
+                                                 client_list]))
 
     def add_stock(self, update, context):
         if not self.is_admin(update, context):
