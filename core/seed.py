@@ -16,7 +16,7 @@ def create_tables(database):
             nickname text NOT NULL UNIQUE,
             telegram_id text NOT NULL UNIQUE,
             barcode text NOT NULL UNIQUE,
-            balance REAL NOT NULL,
+            balance REAL NOT NULL
         );
     """)
 
