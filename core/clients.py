@@ -1,5 +1,6 @@
 import random
 
+
 class Client:
     def __init__(self, client_id, nickname, telegram_id, barcode, balance):
         self.client_id = client_id
@@ -9,7 +10,8 @@ class Client:
         self.balance = balance
 
     def __str__(self):
-        return "Client({}, {}, {}, {}, {})".format(self.client_id, self.nickname, self.telegram_id, self.barcode, self.balance)
+        return "Client({}, {}, {}, {}, {})".format(self.client_id, self.nickname, self.telegram_id, self.barcode,
+                                                   self.balance)
 
     @staticmethod
     def create(name, telegram_id):
@@ -35,7 +37,7 @@ class Clients:
                 s.barcode,
                 s.balance
             FROM clients AS s WHERE s.barcode = ?"""
-        data = (barcode, )
+        data = (barcode,)
         results = self.database.select(query, data)
         if len(results):
             return Client(*results[0])

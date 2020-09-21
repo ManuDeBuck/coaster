@@ -154,7 +154,7 @@ class CoasterBotHandler:
                                  text="No clients yet.")
             return
         context.bot.send_message(chat_id=update.effective_chat.id,
-                                 text="\n".join([f"Client {client.name}: {client.balance}" for client in client_list]))
+                                 text="\n".join([f"Client {client.nickname}: {client.balance}" for client in client_list]))
 
     def add_stock(self, update, context):
         if not self.is_admin(update, context):
