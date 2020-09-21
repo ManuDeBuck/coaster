@@ -65,3 +65,17 @@ class Clients:
         results = self.database.select(query, data)
         if len(results):
             return Client(*results[0])
+
+    def list(self):
+        query = """
+                SELECT  s.id,
+                        s.nickname,
+                        s.telegram_id,
+                        s.barcode,
+                        s.balance
+                    FROM clients AS s"""
+        results = self.database.select(query)
+        clients = []
+        for result in results:
+            clients.append(Client(*result))
+        return clients

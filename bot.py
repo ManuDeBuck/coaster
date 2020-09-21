@@ -145,6 +145,17 @@ class CoasterBotHandler:
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text="\n".join(["{}: {}".format(item.name, item.stock) for item in items_list]))
 
+    def list_balances(self, update, context):
+        if not self.is_admin(update, context):
+            return
+        client_list = self.clients.list()
+        if not len(client_list):
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                 text="No clients yet.")
+            return
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                                 text="\n".join([f"Client {client.name}: {client.balance}" for client in client_list]))
+
     def add_stock(self, update, context):
         if not self.is_admin(update, context):
             return
@@ -167,7 +178,7 @@ class CoasterBotHandler:
     def help(update, context):
         public_commands = ["/get_balance", "/telegram_id", "/get_barcode", "/help"]
         admin_commands = ["/add_product", "/create_client", "/list_stock", "/add_stock", "/reset_balance",
-                          "/remove_product"]
+                          "/remove_product", "/list_balances"]
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text="Current public commands are: {}. Current admin-only commands are: {}".format(
                                      ", ".join(public_commands), ", ".join(admin_commands)))
@@ -213,6 +224,9 @@ class CoasterBotHandler:
 
         change_price_handler = CommandHandler('change_price', self.change_price)
         dispatcher.add_handler(change_price_handler)
+
+        list_balances_handler = CommandHandler('list_balances', self.list_balances)
+        dispatcher.add_handler(list_balances_handler)
 
         help_handler = CommandHandler('help', self.help)
         dispatcher.add_handler(help_handler)
