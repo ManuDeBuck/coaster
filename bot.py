@@ -7,6 +7,7 @@ from barcode.writer import ImageWriter
 from dotenv import load_dotenv
 from core.clients import Clients, Client
 from core.items import Items, Item
+from core.purchases import Purchases, Purchase
 
 
 class CoasterBotHandler:
@@ -15,6 +16,7 @@ class CoasterBotHandler:
         self.admin_telegram_id = admin_telegram_id
         self.clients = Clients(self.database)
         self.items = Items(self.database)
+        self.purchases = Purchases(self.database)
 
     def is_admin(self, update, context):
         if int(update.message.from_user.id) != int(self.admin_telegram_id):
@@ -105,9 +107,6 @@ class CoasterBotHandler:
                                      text="Format: /create_client nickname telegram_id")
         client_name = command_split[1]
         client_telegram_id = command_split[2]
-        if len(command_split) < 3:
-            context.bot.send_message(chat_id=update.effective_chat.id,
-                                     text="A name for the new client should be provided")
         new_client = Client.create(client_name, client_telegram_id)
         self.clients.persist(new_client)
         context.bot.send_message(chat_id=update.effective_chat.id,
@@ -156,6 +155,40 @@ class CoasterBotHandler:
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text="\n".join([f"Client {client.nickname}: {round(client.balance, 2)}" for client in
                                                  client_list]))
+
+    def list_purchases(self, update, context):
+        telegram_id = update.message.from_user.id
+        client = self.clients.get_by_telegram_id(telegram_id)
+        if client is not None:
+            all_items = self.items.list()
+            purchases_by_client = self.purchases.get_by_user_id(client.client_id)
+            item_names = [list(filter(lambda x: x.item_id == purchase.item_id, all_items)) for purchase in
+                          purchases_by_client]
+            item_names = ["product unknown" if not len(items) else items[0] for items in item_names]
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                     text="\n".join([f"{purchase.timestamp}: {item_name}, {purchase.paid_price}" for
+                                                     (item_name, purchase) in zip(item_names, purchases_by_client)]))
+        else:
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                     text="You currently are not a client.")
+
+    def get_item_barcode(self, update, context):
+        command_split = update.message.text.split(" ")
+        if len(command_split) < 2:
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                     text="Format: /get_item_barcode item")
+        item_name = command_split[1]
+        item = self.items.get_by_item_name(item_name)
+        if item is not None:
+            filename = "barcodes/{}.png".format(item.barcode)
+            if not os.path.isfile(filename):
+                code = Code128(item.barcode, writer=ImageWriter())
+                code.save("barcodes/{}".format(item.barcode))
+            context.bot.send_photo(chat_id=update.effective_chat.id,
+                                   photo=open("barcodes/{}.png".format(item.barcode), "rb"))
+        else:
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                     text=f"The item with name {item_name} currently does not exist.")
 
     def add_stock(self, update, context):
         if not self.is_admin(update, context):
