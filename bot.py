@@ -204,6 +204,17 @@ class CoasterBotHandler:
             context.bot.send_message(chat_id=update.effective_chat.id,
                                      text=f"The item with name {item_name} currently does not exist.")
 
+    def list_item_prices(self, update, context):
+        if not self.is_admin(update, context):
+            return
+        items_list = self.items.list()
+        if not len(items_list):
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                     text="No products yet.")
+            return
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                                 text="\n".join(["{}: {}".format(item.name, item.price) for item in items_list]))
+
     def add_stock(self, update, context):
         if not self.is_admin(update, context):
             return
@@ -245,7 +256,7 @@ class CoasterBotHandler:
     @staticmethod
     def help(update, context):
         public_commands = ["/get_balance", "/telegram_id", "/get_barcode", "/get_item_barcode", "/list_purchases",
-                           "/help"]
+                           "/help", "/list_prices"]
         admin_commands = ["/add_product", "/create_client", "/list_stock", "/add_stock", "/reset_balance",
                           "/remove_product", "/list_balances", "/remove_stock"]
         context.bot.send_message(chat_id=update.effective_chat.id,
@@ -305,6 +316,9 @@ class CoasterBotHandler:
 
         remove_stock_handler = CommandHandler('remove_stock', self.remove_product)
         dispatcher.add_handler(remove_stock_handler)
+
+        list_prices_handler = CommandHandler('list_prices', self.list_item_prices)
+        dispatcher.add_handler(list_prices_handler)
 
         help_handler = CommandHandler('help', self.help)
         dispatcher.add_handler(help_handler)
