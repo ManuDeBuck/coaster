@@ -23,11 +23,11 @@ def create_tables(database):
     database.create_table("""
         CREATE TABLE IF NOT EXISTS purchases (
             id integer PRIMARY KEY AUTOINCREMENT,
-            item_id integer NOT NULL,
-            client_id integer NOT NULL,
+            item_name text NOT NULL,
+            client_name text NOT NULL,
             paid_price float NOT NULL,
             date text NOT NULL,
-            FOREIGN KEY (item_id) REFERENCES items (id),
-            FOREIGN KEY (client_id) REFERENCES clients (id)
+            FOREIGN KEY (item_name) REFERENCES items (name),
+            FOREIGN KEY (client_name) REFERENCES clients (nickname)
         );
     """)

@@ -165,22 +165,18 @@ class CoasterBotHandler:
         telegram_id = update.message.from_user.id
         client = self.clients.get_by_telegram_id(telegram_id)
         if client is not None:
-            all_items = self.items.list()
-            purchases_by_client = self.purchases.get_by_user_id(client.client_id)
-            print(purchases_by_client)
+            purchases_by_client = self.purchases.get_by_user_name(client.nickname)
+            # TODO: Limit to a specific amount
             if not len(purchases_by_client):
                 context.bot.send_message(chat_id=update.effective_chat.id,
                                          text="You currently don't have any purchases.")
                 return
-            item_names = [list(filter(lambda x: x.item_id == purchase.item_id, all_items)) for purchase in
-                          purchases_by_client]
-            item_names = ["product unknown" if not len(items) else items[0] for items in item_names]
             context.bot.send_message(chat_id=update.effective_chat.id,
                                      text="\n".join([
                                          f"{purchase.timestamp[:purchase.timestamp.find('T')]}:"
-                                         f" {item_name}, {purchase.paid_price}"
+                                         f" {purchase.item_name}, {purchase.paid_price}"
                                          for
-                                         (item_name, purchase) in zip(item_names, purchases_by_client)]))
+                                         purchase in purchases_by_client]))
         else:
             context.bot.send_message(chat_id=update.effective_chat.id,
                                      text="You currently are not a client.")
