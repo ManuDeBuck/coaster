@@ -66,7 +66,7 @@ class CoasterBotHandler:
                                      text="format: /change_price productname new_price")
             return
         product_name = command_split[1].strip()
-        product_new_price = command_split[1].strip()
+        product_new_price = command_split[2].strip()
         product = self.items.get_by_item_name(product_name)
         product.price = product_new_price
         self.items.persist(product)
