@@ -8,7 +8,6 @@ from dotenv import load_dotenv
 from core.clients import Clients, Client
 from core.items import Items, Item
 from core.purchases import Purchases
-from datetime import datetime
 
 
 class CoasterBotHandler:
@@ -168,6 +167,7 @@ class CoasterBotHandler:
         if client is not None:
             all_items = self.items.list()
             purchases_by_client = self.purchases.get_by_user_id(client.client_id)
+            print(purchases_by_client)
             if not len(purchases_by_client):
                 context.bot.send_message(chat_id=update.effective_chat.id,
                                          text="You currently don't have any purchases.")
@@ -205,8 +205,6 @@ class CoasterBotHandler:
                                      text=f"The item with name {item_name} currently does not exist.")
 
     def list_item_prices(self, update, context):
-        if not self.is_admin(update, context):
-            return
         items_list = self.items.list()
         if not len(items_list):
             context.bot.send_message(chat_id=update.effective_chat.id,
@@ -255,8 +253,7 @@ class CoasterBotHandler:
 
     @staticmethod
     def help(update, context):
-        public_commands = ["/get_balance", "/telegram_id", "/get_barcode", "/get_item_barcode", "/list_purchases",
-                           "/help", "/list_prices"]
+        public_commands = ["/get_balance", "/telegram_id", "/get_barcode", "/get_item_barcode", "/list_purchases", "/list_prices", "/help"]
         admin_commands = ["/add_product", "/create_client", "/list_stock", "/add_stock", "/reset_balance",
                           "/remove_product", "/list_balances", "/remove_stock", "/change_price"]
         context.bot.send_message(chat_id=update.effective_chat.id,

@@ -49,24 +49,27 @@ def main():
         product = items.get_by_barcode(barcode)
         print("Scanned product: {}".format(str(product)))
 
-        price_per_person = product.price
-        if len(client_list) > 1:
-            price_per_person = ceil(product.price * 20 / len(client_list)) / 20  # ceil with 2 decimals
-        print("Price paid per person: {}".format(str(price_per_person)))
+        if product:
+            price_per_person = product.price
+            if len(client_list) > 1:
+                price_per_person = ceil(product.price * 20 / len(client_list)) / 20  # ceil with 2 decimals
+            print("Price paid per person: {}".format(str(price_per_person)))
 
-        for client in client_list:
-            purchase = Purchase.create(product, client, price_per_person)
-            purchases.persist(purchase)
+            for client in client_list:
+                purchase = Purchase.create(product, client, price_per_person)
+                purchases.persist(purchase)
 
-            client.balance += price_per_person
-            clients.persist(client)
+                client.balance += price_per_person
+                clients.persist(client)
 
-            print(purchase)
+                print(purchase)
 
-        product.stock -= 1
-        items.persist(product)
+            product.stock -= 1
+            items.persist(product)
 
-        print("Purchase registered")
+            print("Purchase registered")
+        else:
+            print("No item scanned")
 
 
 if __name__ == "__main__":
