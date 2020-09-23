@@ -258,7 +258,7 @@ class CoasterBotHandler:
         public_commands = ["/get_balance", "/telegram_id", "/get_barcode", "/get_item_barcode", "/list_purchases",
                            "/help", "/list_prices"]
         admin_commands = ["/add_product", "/create_client", "/list_stock", "/add_stock", "/reset_balance",
-                          "/remove_product", "/list_balances", "/remove_stock"]
+                          "/remove_product", "/list_balances", "/remove_stock", "/change_price"]
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text="Current public commands are: {}\nCurrent admin-only commands are: {}".format(
                                      ", ".join(public_commands), ", ".join(admin_commands)))
