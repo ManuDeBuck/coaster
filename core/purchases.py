@@ -30,13 +30,13 @@ class Purchases:
         generated_id = self.database.insert(query, data)
         purchase.purchase_id = generated_id
 
-    def get_by_user_name(self, client_id):
+    def get_by_user_name(self, client_name):
         query = """SELECT   s.id,
                             s.item_name,
                             s.client_name,
                             s.paid_price,
-                            s.date FROM purchases AS s WHERE s.client_id = ? ORDER BY date"""
-        data = (client_id,)
+                            s.date FROM purchases AS s WHERE s.client_name = ? ORDER BY date"""
+        data = (client_name,)
         results = self.database.select(query, data)
         purchases = []
         for result in results:
