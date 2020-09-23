@@ -210,7 +210,7 @@ class CoasterBotHandler:
 
     @staticmethod
     def help(update, context):
-        public_commands = ["/get_balance", "/telegram_id", "/get_barcode", "/help"]
+        public_commands = ["/get_balance", "/telegram_id", "/get_barcode", "/get_item_barcode", "/list_purchases", "/help"]
         admin_commands = ["/add_product", "/create_client", "/list_stock", "/add_stock", "/reset_balance",
                           "/remove_product", "/list_balances"]
         context.bot.send_message(chat_id=update.effective_chat.id,
@@ -261,6 +261,12 @@ class CoasterBotHandler:
 
         list_balances_handler = CommandHandler('list_balances', self.list_balances)
         dispatcher.add_handler(list_balances_handler)
+
+        list_purchases_handler = CommandHandler('list_purchases', self.list_purchases)
+        dispatcher.add_handler(list_purchases_handler)
+
+        item_barcode_handler = CommandHandler('get_item_barcode', self.get_item_barcode)
+        dispatcher.add_handler(item_barcode_handler)
 
         help_handler = CommandHandler('help', self.help)
         dispatcher.add_handler(help_handler)
