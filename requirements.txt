@@ -7,7 +7,6 @@ cssselect2==0.3.0
 decorator==4.4.2
 defusedxml==0.6.0
 Pillow==7.2.0
-pkg-resources==0.0.0
 pycparser==2.20
 python-barcode==0.13.1
 python-dotenv==0.14.0
