@@ -7,7 +7,8 @@ from barcode.writer import ImageWriter
 from dotenv import load_dotenv
 from core.clients import Clients, Client
 from core.items import Items, Item
-from core.purchases import Purchases, Purchase
+from core.purchases import Purchases
+from datetime import datetime
 
 
 class CoasterBotHandler:
@@ -32,6 +33,7 @@ class CoasterBotHandler:
         if len(command_split) < 5:
             context.bot.send_message(chat_id=update.effective_chat.id,
                                      text="format: /add_product product description EAN_code price")
+            return
         product_name = command_split[1].strip()
         product_description = command_split[2].strip()
         product_ean = command_split[3].strip()
@@ -48,6 +50,7 @@ class CoasterBotHandler:
         if len(command_split) < 2:
             context.bot.send_message(chat_id=update.effective_chat.id,
                                      text="format: /remove_product productname")
+            return
         product_name = command_split[1].strip()
         product = self.items.get_by_item_name(product_name)
         self.items.remove(product)
@@ -61,6 +64,7 @@ class CoasterBotHandler:
         if len(command_split) < 3:
             context.bot.send_message(chat_id=update.effective_chat.id,
                                      text="format: /change_price productname new_price")
+            return
         product_name = command_split[1].strip()
         product_new_price = command_split[1].strip()
         product = self.items.get_by_item_name(product_name)
@@ -87,6 +91,7 @@ class CoasterBotHandler:
         if len(command_split) < 2:
             context.bot.send_message(chat_id=update.effective_chat.id,
                                      text="Format: /reset_balance nickname")
+            return
         client_name = command_split[1]
         client = self.clients.get_by_nickname(client_name)
         if client is not None:
@@ -105,6 +110,7 @@ class CoasterBotHandler:
         if len(command_split) < 3:
             context.bot.send_message(chat_id=update.effective_chat.id,
                                      text="Format: /create_client nickname telegram_id")
+            return
         client_name = command_split[1]
         client_telegram_id = command_split[2]
         new_client = Client.create(client_name, client_telegram_id)
@@ -162,12 +168,19 @@ class CoasterBotHandler:
         if client is not None:
             all_items = self.items.list()
             purchases_by_client = self.purchases.get_by_user_id(client.client_id)
+            if not len(purchases_by_client):
+                context.bot.send_message(chat_id=update.effective_chat.id,
+                                         text="You currently don't have any purchases.")
+                return
             item_names = [list(filter(lambda x: x.item_id == purchase.item_id, all_items)) for purchase in
                           purchases_by_client]
             item_names = ["product unknown" if not len(items) else items[0] for items in item_names]
             context.bot.send_message(chat_id=update.effective_chat.id,
-                                     text="\n".join([f"{purchase.timestamp}: {item_name}, {purchase.paid_price}" for
-                                                     (item_name, purchase) in zip(item_names, purchases_by_client)]))
+                                     text="\n".join([
+                                         f"{purchase.timestamp[:purchase.timestamp.find('T')]}:"
+                                         f" {item_name}, {purchase.paid_price}"
+                                         for
+                                         (item_name, purchase) in zip(item_names, purchases_by_client)]))
         else:
             context.bot.send_message(chat_id=update.effective_chat.id,
                                      text="You currently are not a client.")
@@ -177,6 +190,7 @@ class CoasterBotHandler:
         if len(command_split) < 2:
             context.bot.send_message(chat_id=update.effective_chat.id,
                                      text="Format: /get_item_barcode item")
+            return
         item_name = command_split[1]
         item = self.items.get_by_item_name(item_name)
         if item is not None:
@@ -197,6 +211,7 @@ class CoasterBotHandler:
         if len(command_split) < 3:
             context.bot.send_message(chat_id=update.effective_chat.id,
                                      text="Format: /add_stock product_name quantity")
+            return
         item_name = command_split[1]
         item_add_stock = int(command_split[2])
         item = self.items.get_by_item_name(item_name)
@@ -208,11 +223,31 @@ class CoasterBotHandler:
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text="Item {} has current stock: {}".format(item.name, item.stock))
 
+    def remove_stock(self, update, context):
+        if not self.is_admin(update, context):
+            return
+        command_split = update.message.text.split(" ")
+        if len(command_split) < 3:
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                     text="Format: /remove_stock product_name quantity")
+            return
+        item_name = command_split[1]
+        item_remove_stock = int(command_split[2])
+        item = self.items.get_by_item_name(item_name)
+        if not item:
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                     text="No product with name {} was found.".format(item_name))
+        item.stock -= item_remove_stock
+        self.items.persist(item)
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                                 text="Item {} has current stock: {}".format(item.name, item.stock))
+
     @staticmethod
     def help(update, context):
-        public_commands = ["/get_balance", "/telegram_id", "/get_barcode", "/get_item_barcode", "/list_purchases", "/help"]
+        public_commands = ["/get_balance", "/telegram_id", "/get_barcode", "/get_item_barcode", "/list_purchases",
+                           "/help"]
         admin_commands = ["/add_product", "/create_client", "/list_stock", "/add_stock", "/reset_balance",
-                          "/remove_product", "/list_balances"]
+                          "/remove_product", "/list_balances", "/remove_stock"]
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text="Current public commands are: {}. Current admin-only commands are: {}".format(
                                      ", ".join(public_commands), ", ".join(admin_commands)))
@@ -267,6 +302,9 @@ class CoasterBotHandler:
 
         item_barcode_handler = CommandHandler('get_item_barcode', self.get_item_barcode)
         dispatcher.add_handler(item_barcode_handler)
+
+        remove_stock_handler = CommandHandler('remove_stock', self.remove_product)
+        dispatcher.add_handler(remove_stock_handler)
 
         help_handler = CommandHandler('help', self.help)
         dispatcher.add_handler(help_handler)
