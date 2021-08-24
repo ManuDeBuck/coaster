@@ -307,7 +307,7 @@ class CoasterBotHandler:
         item_barcode_handler = CommandHandler('get_item_barcode', self.get_item_barcode)
         dispatcher.add_handler(item_barcode_handler)
 
-        remove_stock_handler = CommandHandler('remove_stock', self.remove_product)
+        remove_stock_handler = CommandHandler('remove_stock', self.remove_stock)
         dispatcher.add_handler(remove_stock_handler)
 
         list_prices_handler = CommandHandler('list_prices', self.list_item_prices)
