@@ -122,7 +122,7 @@ class CoasterBotHandler:
         if not self.is_admin(update, context):
             return
         command_split = update.message.text.split(" ")
-        if len(command_split) < 3:
+        if len(command_split) < 2:
             context.bot.send_message(chat_id=update.effective_chat.id,
                                      text="Format: /delete_client nickname")
             return
@@ -273,7 +273,7 @@ class CoasterBotHandler:
     @staticmethod
     def help(update, context):
         public_commands = ["/balance", "/telegram_id", "/get_barcode", "/get_item_barcode", "/list_purchases", "/list_prices", "/help"]
-        admin_commands = ["/add_product", "/create_client", "/list_stock", "/add_stock", "/reset_balance",
+        admin_commands = ["/add_product", "/create_client", "/delete_client", "/list_stock", "/add_stock", "/reset_balance",
                           "/remove_product", "/list_balances", "/remove_stock", "/change_price"]
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text="Current public commands are: {}\nCurrent admin-only commands are: {}".format(
