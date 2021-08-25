@@ -118,6 +118,29 @@ class CoasterBotHandler:
                                  text="Hello, {}! Have a drink, have a snack, it's all on you tonight!".format(
                                      new_client.nickname))
 
+    def delete_client(self, update, context):
+        if not self.is_admin(update, context):
+            return
+        command_split = update.message.text.split(" ")
+        if len(command_split) < 3:
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                     text="Format: /delete_client nickname")
+            return
+        client_name = command_split[1]
+        client = self.clients.get_by_nickname(client_name)
+        if not client:
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                     text="No client with nickname {}".format(client_name))
+            return
+        if client.balance > 0:
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                     text="Cannot delete a client with a positive balance.".format(client_name))
+            return
+        self.clients.remove(client_name)
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                                 text="Client with nickname {} is deleted.".format(
+                                     client_name))
+
     @staticmethod
     def get_telegram_id(update, context):
         telegram_id = update.message.from_user.id
@@ -270,6 +293,9 @@ class CoasterBotHandler:
         # Add handlers for commands
         add_client_handler = CommandHandler('create_client', self.create_client)
         dispatcher.add_handler(add_client_handler)
+
+        delete_client_handler = CommandHandler('delete_client', self.delete_client)
+        dispatcher.add_handler(delete_client_handler)
 
         get_barcode_handler = CommandHandler('get_barcode', self.get_barcode)
         dispatcher.add_handler(get_barcode_handler)

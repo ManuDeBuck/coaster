@@ -81,3 +81,10 @@ class Clients:
         for result in results:
             clients.append(Client(*result))
         return clients
+
+    def remove(self, nickname):
+        query = """
+                DELETE FROM clients WHERE nickname = ?
+                """
+        data = (nickname,)
+        self.database.delete(query, data)
