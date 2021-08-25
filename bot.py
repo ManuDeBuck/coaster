@@ -52,7 +52,7 @@ class CoasterBotHandler:
             return
         product_name = command_split[1].strip()
         product = self.items.get_by_item_name(product_name)
-        self.items.remove(product)
+        self.items.remove(product.item_id)
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text=f"The product {product_name} is removed.")
 
