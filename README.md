@@ -32,7 +32,7 @@ $ pip install -r requirements
 Create database (with name _coaster.db_, but may be changed if wanted):
 
 ``` bash
-$ mysql3 coaster.db
+$ sqlite3 coaster.db
 ```
 
 ### .env file

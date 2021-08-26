@@ -27,7 +27,9 @@ def create_tables(database):
             client_name text NOT NULL,
             paid_price float NOT NULL,
             date text NOT NULL,
-            FOREIGN KEY (item_name) REFERENCES items (name),
-            FOREIGN KEY (client_name) REFERENCES clients (nickname)
+            FOREIGN KEY (item_name) REFERENCES items (name) ON DELETE SET NULL, 
+            FOREIGN KEY (client_name) REFERENCES clients (nickname) ON DELETE SET NULL
         );
     """)
+
+
