@@ -47,7 +47,10 @@ class Database:
     def delete(self, query, data=None):
         try:
             cursor = self.connection.cursor()
-            cursor.execute(query)
+            if data:
+                cursor.execute(query, data)
+            else:
+                cursor.execute(query)
             self.connection.commit()
         except Exception as e:
             print(e)
