@@ -52,6 +52,9 @@ class CoasterBotHandler:
             return
         product_name = command_split[1].strip()
         product = self.items.get_by_item_name(product_name)
+        if not product:
+            context.bot.send_message(chat_id=update.effective_chat.id,
+                                     text=f"The product with name {product_name} is not found.")
         self.items.remove(product.item_id)
         context.bot.send_message(chat_id=update.effective_chat.id,
                                  text=f"The product {product_name} is removed.")
