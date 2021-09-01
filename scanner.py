@@ -32,10 +32,10 @@ def main():
 
     while True:
         client_barcodes = []
-        barcode = input().strip()
+        barcode = input().strip().upper()
         while barcode_enum(barcode) is BarcodeType.Client:
             client_barcodes.append(barcode)
-            barcode = input().strip()
+            barcode = input().strip().upper()
 
         client_list = []
         for client_barcode in client_barcodes:
