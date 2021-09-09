@@ -9,7 +9,7 @@ cryptography==3.4.8
 cssselect2==0.4.1
 decorator==5.0.9
 defusedxml==0.7.1
-Pillow==8.3.1
+Pillow==8.3.2
 pkg_resources==0.0.0
 pycparser==2.20
 python-barcode==0.13.1
